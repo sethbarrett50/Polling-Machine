@@ -10,6 +10,10 @@ namespace Polling_Station
     {
         public List<Candidate> _candidates = new List<Candidate>();
         //List of Candidates
+        private bool _allowUnder18 = false;
+        //Bool to represent if under 18 voters are allowed.
+        private bool _party = false;
+        //Bool to represent if the options are affiliated with parties
         private int _numCandidates = 0;
         //Int representing the number of candidates
         private Candidate _winner;
@@ -22,12 +26,21 @@ namespace Polling_Station
         public void SetUpBooth()
         {
             Console.Clear();
-            for(int i = 0; i < _numCandidates; i++)
+            Console.WriteLine("Are there any party affiliations for the options?(y/n)");
+            if (Console.ReadLine() == "y") _party = true;
+            Console.Clear();
+            Console.WriteLine("Do voters have to be 18?(y/n)");
+            if (Console.ReadLine() == "n") _allowUnder18 = true;
+            Console.Clear();
+            for (int i = 0; i < _numCandidates; i++)
             {
-                Console.WriteLine($"What is Candidate {i + 1}'s name?");
+                Console.WriteLine($"What is Option {i + 1}'s name?");
                 _candidates.Insert(0, new Candidate(name: Console.ReadLine()));
-                Console.WriteLine($"What is {_candidates[0]._name}'s party?");
-                _candidates[0]._party = Console.ReadLine();
+                if (_party)
+                {
+                    Console.WriteLine($"What is {_candidates[0]._name}'s party?");
+                    _candidates[0]._party = Console.ReadLine();
+                }
                 Console.WriteLine();
             }
             Console.Clear();
@@ -52,7 +65,7 @@ namespace Polling_Station
                 }
                 //Does input verification for the voter's inputted age
                 _voters[0]._age = tempAge;
-                if(_voters[0]._age >= 18)
+                if(_voters[0]._age >= 18 || _allowUnder18)
                 {
                     ShowAllCandidates();
                     Console.WriteLine("Please enter the number of the candidate you would like to vote for");
