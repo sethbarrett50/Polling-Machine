@@ -23,7 +23,7 @@ namespace Polling_Station
             get; set;
         }
         //Int to represent the number of votes a candidate recieves
-        public Candidate(string name, string party = "Independent")
+        public Candidate(string name, string party = "")
         {
             _name = name;
             _party = party;

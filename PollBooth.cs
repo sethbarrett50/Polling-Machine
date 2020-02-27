@@ -16,7 +16,8 @@ namespace Polling_Station
         //Bool to represent if the options are affiliated with parties
         private int _numCandidates = 0;
         //Int representing the number of candidates
-        private Candidate _winner;
+        private List<Candidate> _winner = new List<Candidate>();
+
         //Candidate that will reference the candidate with the most final votes
         public PollBooth(int numCandidates)
         {
@@ -35,7 +36,7 @@ namespace Polling_Station
             for (int i = 0; i < _numCandidates; i++)
             {
                 Console.WriteLine($"What is Option {i + 1}'s name?");
-                _candidates.Insert(0, new Candidate(name: Console.ReadLine()));
+                _candidates.Add(new Candidate(name: Console.ReadLine()));
                 if (_party)
                 {
                     Console.WriteLine($"What is {_candidates[0]._name}'s party?");
@@ -80,8 +81,16 @@ namespace Polling_Station
                 //Checks to see if there are any more voters
             } while (!flag);
             //Runs a loop for voters to vote
-            _winner = _candidates[0];
-            for(int i = 0; i< _numCandidates; i++)if (_candidates[i].GetTotalVotes() > _winner.GetTotalVotes()) _winner = _candidates[i];
+            _winner.Add(_candidates[0]);
+            for(int i = 1; i< _numCandidates; i++)
+            {
+                if (_candidates[i].GetTotalVotes() > _winner[0].GetTotalVotes())
+                {
+                    _winner.Clear();
+                    _winner[0] = _candidates[i];
+                }
+                else if(_candidates[i].GetTotalVotes() == _winner[0].GetTotalVotes()) _winner.Insert(0, _candidates[i]);
+            }
             Console.Clear();
             //Calculates the winner
         }
@@ -91,7 +100,9 @@ namespace Polling_Station
             Console.WriteLine("Candidates:");
             for(int i = 0; i < _numCandidates; i++)
             {
-                Console.WriteLine($"[{i + 1}]: {_candidates[i]._name}: {_candidates[i]._party} party");
+                string temp = $"[{i + 1}]: {_candidates[i]._name}";
+                if (_party) temp += $": {_candidates[i]._party} party";
+                Console.WriteLine(temp);
             }
         }
         //Displays all the candidates
@@ -105,7 +116,33 @@ namespace Polling_Station
         //Displays all candidates and their final votes
         public void ShowWinner()
         {
-            Console.WriteLine($"The winning candidate was {_winner._name}, running for the {_winner._party}. {_winner._name} won with {_winner.GetTotalVotes()} votes!");
+            bool tie = false;
+            if (_winner.Count() > 1) tie = true;
+            string temp;
+            if (tie)
+            {
+                temp = "There was a tie between";
+                for (int i = 0; i < _winner.Count() - 1; i++)
+                {
+                    temp += $" {_winner[i]._name},";
+                    if (_party) temp += $" representing the {_winner[i]._party} party,";
+                }
+                temp += $" and {_winner[_winner.Count() - 1]._name}";
+                if (_party) temp += $", representing the {_winner[_winner.Count() - 1]._party}! ";
+                else temp += "! ";
+                temp += "They ";
+            }
+            else
+            {
+                temp = $"The winning candidate was { _winner[0]._name}";
+                if (_party) temp += $"running for the {_winner[0]._party}! ";
+                else temp += "! ";
+                temp += $"{_winner[0]._name} "; 
+            }
+            temp += $"won with { _winner[0].GetTotalVotes()} vote";
+            if (_winner[0].GetTotalVotes() > 1) temp += "s!";
+            else temp += "!";
+            Console.WriteLine(temp);
         }
         //Displays the Candidate with the most votes
         static int UserInputVeri(int lowerBound, int upperBound, bool letter = false, string response = "Please enter a valid value")

@@ -11,7 +11,7 @@ namespace Polling_Station
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("How many candidates are running?(1-8)");
+            Console.WriteLine("How many options are there??(1-8)");
             PollBooth _polling = new PollBooth(UserInputVeri(lowerBound: 1, upperBound: 8, response: "Please enter a valid number of candidates."));
             _polling.SetUpBooth();
             _polling.AllowVoting();
